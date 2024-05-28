@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student's Flutter App. Answer Checking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        #container {
+            max-width: 100vw;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fff;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 20px 0;
+            text-align: center;
+            color: #fff;
+            background-color: #34495E;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            color: #000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 2px solid #34495E;
+            background-color: #f2f2f2;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        select:hover,
+        select:focus {
+            border-color: #999;
+        }
+
+        button {
+            padding: 8px 16px; /* Adjust padding as needed */
+            font-size: 14px; /* Adjust font size as needed */
+            border-radius: 5px;
+            background-color: #34495E;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        textarea {
+            width: 72%; /* Adjust the width as needed */
+            height: auto; /* Allow the textarea to expand vertically */
+            border: 2px solid #34495E; /* Border color */
+            padding: 10px;
+            resize: none; /* Disable resizing */
+            text-align: center; /* Center the text horizontally */
+            background-color: #f2f2f2; /* Background color */
+            border-radius: 5px;
+            margin-top: -2px;
+            margin-left: 5px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            align-items: center;
+        }
+        .button-container1 {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .button-container2 {
+            display: flex;
+            justify-content: left;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .butt{
+            margin-top: 5px;
+        }
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .similar-container {
+            padding: 20px;
+            margin-top: -27px;
+            margin-bottom: -25px;
+        }
+        .image-preview {
+            flex: 0 0 45%;
+            margin-bottom: 20px;
+        }
+
+        .image-preview img {
+            width: 100%;
+        }
+
+        .preview-images {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .preview-image {
+            width: calc(10% - 5px);
+            border: 0.1px solid #34495E;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer; /* Add this line to change the cursor to a pointer */
+        }
+        
+        .preview-image img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .highlighted {
+            border: 4px solid #C0392B;
+        }        
+
+        @media screen and (max-width: 768px) {
+            .image-preview {
+                flex: 0 0 100%;
+            }
+        }
+
+        hr.dotted {
+            border-top: 3px dotted #bbb;
+        }
+
+        .vl {
+            border-left: 3px dotted #bbb;
+            position: flex;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+        .loader {
+            border: 16px dotted #AAB7B8; /* Light grey */
+            border-top: 16px solid #fff; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            display: none; /* Initially hidden */
+            position: absolute;
+            top: 30%;
+            left: 44%;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="loader" id="loader"></div>
+        <h1>Checking Flutter Exercise:v2</h1>
+        <br>
+        <label for="exercise_select" style="font-weight: bold; font-size: 20px;color: #000">Select an exercise:</label>
+        <select id="exercise_select">
+            {% for folder in exercise_folders %}
+                <option value="{{ folder }}">{{ folder }}</option>
+            {% endfor %}
+        </select>
+        <hr class="dotted">
+        <div class="image-container">
+            <div class="image-preview">
+                <h3>Exercise Image:</h3>
+                <img id="exercise_image" src="" alt="Exercise Image">
+                <div class="button-container1">
+                    <div id="exercise_image_name" style="text-align: center; font-weight: bold; color: #000;"></div>
+                </div>
+            </div>
+            <div class="vl"></div>
+            <div class="image-preview">
+                <h3>Answer Image:</h3>
+                <img id="answer_image" src="" alt="Answer Image">
+                <div class="button-container">
+                    <button id="previous_button">&laquo; Previous</button>
+                    <div id="current_image_name" style="text-align: center; font-weight: bold; color: #000;"></div>
+                    <button id="next_button">Next &raquo;</button>
+                </div>
+                <div class="preview-images" id="preview_images_container"></div>
+            </div>
+        </div>
+        <hr class="dotted">
+        <br>
+        <div class="image-container">
+        <div class="image-preview">
+            <br>
+            <label for="similarity_rate" style="font-weight: bold; font-size: 19px;color: #000; margin-top: 20px;">Similarity rate:</label>
+            <br>
+            <br>
+            <div class="button-container2 butt">
+                <button id="check_button">Check each</button>
+                <textarea rows="1" cols="20" id="similarity_rate"></textarea>
+            </div>
+        </div>
+        <div class="vl"></div>
+            <div class="image-preview">
+                <h3>Highlight Difference in Red:</h3>
+                <img id="diff_image" src="" alt="Difference Image">
+                <br>
+                <div id="diff_current_image_name" style="text-align: center; font-weight: bold; color: #000;"></div>
+                
+            </div>
+        </div>
+        <hr class="dotted">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to show the loading spinner
+            function showLoader() {
+                document.getElementById('loader').style.display = 'block';
+                console.log('A- show the loading spinner');
+            }
+
+            // Function to hide the loading spinner
+            function hideLoader() {
+                document.getElementById('loader').style.display = 'none';
+                console.log('B- hide the loading spinner');
+            }
+
+            // Call showLoader() before fetching images
+            
+
+            // Function to fetch images when the page loads or combo box selection changes
+            function fetchImages() {
+                showLoader();
+                var selectedExercise = document.getElementById('exercise_select').value;
+                fetch('/get_images', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({exercise_name: selectedExercise})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('exercise_image').src = data.exercise_image;
+                    document.getElementById('answer_image').src = data.answer_images[0];
+                    document.getElementById('diff_image').src = data.diff_images[0];
+                    document.getElementById('exercise_image_name').textContent = data.exercise_image.split('/').pop();
+                    document.getElementById('current_image_name').textContent = data.answer_images[0].split('/').pop();
+                    document.getElementById('diff_current_image_name').textContent = data.diff_images[0].split('/').pop();
+                    var currentImageIndex = 0;
+                    var currentImageIndex1 = 0;
+                    document.getElementById('next_button').addEventListener('click', function () {
+                        currentImageIndex = (currentImageIndex + 1) % data.answer_images.length;
+                        updateAnswerImage(data.answer_images[currentImageIndex], currentImageIndex, data.diff_images[currentImageIndex]);
+                    });
+                    document.getElementById('previous_button').addEventListener('click', function () {
+                        currentImageIndex = (currentImageIndex - 1 + data.answer_images.length) % data.answer_images.length;
+                        updateAnswerImage(data.answer_images[currentImageIndex], currentImageIndex, data.diff_images[currentImageIndex]);
+                    });
+    
+                    // Display preview images
+                    var previewImagesContainer = document.getElementById('preview_images_container');
+                    previewImagesContainer.innerHTML = '';
+                    data.answer_images.forEach((imageSrc, index) => {
+                        var previewImage = document.createElement('div');
+                        previewImage.classList.add('preview-image');
+                        var img = document.createElement('img');
+                        img.src = imageSrc;
+                        img.alt = 'Preview Image';
+                        if (index === currentImageIndex) {
+                            previewImage.classList.add('highlighted'); // Highlight the current answer image preview
+                        }
+                        previewImage.appendChild(img);
+                        previewImagesContainer.appendChild(previewImage);
+                        
+                        var imageSrc1 = data.diff_images[index];
+                        // Add event listener to update the answer image when clicking on a preview image
+                        previewImage.addEventListener('click', function () {
+                            updateAnswerImage(imageSrc, index, imageSrc1); // Pass the index of the clicked preview image
+                            currentImageIndex = index; // Update the current image index
+                        });
+    
+                    });
+                    hideLoader();
+                });
+            }
+    
+            // Function to update the current answer image and its name
+            function updateAnswerImage(imageSrc, index, imageSrc1) {
+                document.getElementById('answer_image').src = imageSrc;
+                document.getElementById('diff_image').src = imageSrc1;
+                document.getElementById('current_image_name').textContent = imageSrc.split('/').pop();
+                document.getElementById('diff_current_image_name').textContent = imageSrc1.split('/').pop();
+                // Remove highlight from all preview images
+                document.querySelectorAll('.preview-image').forEach(preview => {
+                    preview.classList.remove('highlighted');
+                });
+                // Highlight the clicked preview image
+                var currentPreviewImage = document.querySelector('.preview-image:nth-child(' + (index + 1) + ')');
+                currentPreviewImage.classList.add('highlighted');
+            }
+    
+            // Call fetchImages() when the page loads
+            fetchImages();
+    
+            // Call fetchImages() when the combo box selection changes
+            document.getElementById('exercise_select').addEventListener('change', fetchImages);
+    
+            // Call fetchImages() when the "Calculate Similarity" button is clicked
+            document.getElementById('check_button').addEventListener('click', function() {
+                var selectedExercise = document.getElementById('exercise_select').value;
+                fetch('/calculate_similarity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({exercise_me: selectedExercise})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var currentImageName = document.getElementById('current_image_name').textContent;
+                    var remark = data.csv_data.find(item => item.Image === currentImageName).Remark;
+                    document.getElementById('similarity_rate').value = remark;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });        
+    </script>
+    
+</body>
+</html>
