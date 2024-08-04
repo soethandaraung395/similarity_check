@@ -9,5 +9,5 @@ def delete_ds_store(directory):
                 print(f"Deleted: {file_path}")
 
 # Provide the directory path where you want to search for .DS_Store files
-directory_path = "/Users/soethandara/Desktop/Flutter/UITest/similarity_check"
+directory_path = "/Users/soethandara/Desktop/Flutter/FlutterClass2024/similarity_check(version2)"
 delete_ds_store(directory_path)

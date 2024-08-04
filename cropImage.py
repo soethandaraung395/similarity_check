@@ -36,6 +36,6 @@ def crop_black_borders_in_folder(input_folder, output_folder):
             crop_black_border(image_path, output_folder)
 
 # Example usage
-input_folder = '/Users/soethandara/Desktop/Flutter/UITest/similarity_check/Original/'
+input_folder = '/Users/soethandara/Desktop/Flutter/UITest/exercise/exercise1/Original/'
 output_folder = '/Users/soethandara/Desktop/Flutter/UITest/exercise/exercise1/Crop/'
 crop_black_borders_in_folder(input_folder, output_folder)
